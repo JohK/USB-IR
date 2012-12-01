@@ -1,4 +1,4 @@
-.[a|o]
+*.[a|o]
 *.hex
 *.obj
 *.cof
@@ -7,3 +7,4 @@
 *.eep
 *.elf
 *.s
+*.swp
