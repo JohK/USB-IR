@@ -52,6 +52,8 @@ PROGMEM const char usbHidReportDescriptor[22] = {    /* USB report descriptor */
 static uchar    currentAddress;
 static uchar    bytesRemaining;
 
+static uchar	buf[48];
+
 /* ------------------------------------------------------------------------- */
 
 /* usbFunctionRead() is called when the host requests a chunk of data from
@@ -61,7 +63,9 @@ uchar   usbFunctionRead(uchar *data, uchar len)
 {
     if(len > bytesRemaining)
         len = bytesRemaining;
-    eeprom_read_block(data, (uchar *)0 + currentAddress, len);
+ //   eeprom_read_block(data, (uchar *)0 + currentAddress, len);
+
+	memcpy(data, &buf[currentAddress], len);
     currentAddress += len;
     bytesRemaining -= len;
     return len;
@@ -76,7 +80,8 @@ uchar   usbFunctionWrite(uchar *data, uchar len)
         return 1;               /* end of transfer */
     if(len > bytesRemaining)
         len = bytesRemaining;
-    eeprom_write_block(data, (uchar *)0 + currentAddress, len);
+    //eeprom_write_block(data, (uchar *)0 + currentAddress, len);
+	memcpy(data, &buf[currentAddress], len);
     currentAddress += len;
     bytesRemaining -= len;
     return bytesRemaining == 0; /* return 1 if this was the last chunk */
