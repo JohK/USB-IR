@@ -143,9 +143,9 @@ clean:
 
 # file targets:
 
-# Since we don't want to ship the driver multipe times, we copy it into this project:
+# We copy the libraries, so we don't have multiple copies of everything
 usbdrv:
-	cp -r ../../../usbdrv .
+	cp -r ../libs/vusb-*/usbdrv usbdrv
 
 main.elf: usbdrv $(OBJECTS)	# usbdrv dependency only needed because we copy it
 	$(COMPILE) -o main.elf $(OBJECTS)
