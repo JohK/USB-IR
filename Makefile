@@ -13,8 +13,8 @@ FUSE_L  = # see below for fuse values for particular devices
 FUSE_H  = 
 AVRDUDE = avrdude -c avrispmkII -B 10 -P usb -p $(DEVICE) # edit this line for your programmer
 
-CFLAGS  = -Iusbdrv -I. -DDEBUG_LEVEL=0
-OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o main.o
+CFLAGS  = -Iusbdrv -Iirsnd -I. -DDEBUG_LEVEL=0
+OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o irsnd/irsnd.o main.o
 
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 
@@ -150,7 +150,7 @@ usbdrv:
 main.elf: usbdrv $(OBJECTS)	# usbdrv dependency only needed because we copy it
 	$(COMPILE) -o main.elf $(OBJECTS)
 
-main.hex: main.elf
+main.hex: main.elf usbconfig.h main.c
 	rm -f main.hex main.eep.hex
 	avr-objcopy -j .text -j .data -O ihex main.elf main.hex
 	avr-size main.hex

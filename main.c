@@ -34,6 +34,8 @@ at least be connected to INT0 as well.
 #include "usbdrv.h"
 #include "oddebug.h"        /* This is also an example for using debug macros */
 
+#include "irsnd.h"			/* IR Library */
+
 /* ------------------------------------------------------------------------- */
 /* ----------------------------- USB interface ----------------------------- */
 /* ------------------------------------------------------------------------- */
@@ -152,6 +154,38 @@ static void statusLed_On1ms(void) {
 	Led_C = led_c;
 }
 
+
+
+void timer1_init (void)
+{
+#if defined (__AVR_ATtiny45__) || defined (__AVR_ATtiny85__)                // ATtiny45 / ATtiny85:
+    OCR1C   =  (F_CPU / F_INTERRUPTS / 4) - 1;                              // compare value: 1/15000 of CPU frequency, presc = 4
+    TCCR1   = (1 << CTC1) | (1 << CS11) | (1 << CS10);                      // switch CTC Mode on, set prescaler to 4
+#else                                                                       // ATmegaXX:
+    OCR1A   =  (F_CPU / F_INTERRUPTS) - 1;                                  // compare value: 1/15000 of CPU frequency
+    TCCR1B  = (1 << WGM12) | (1 << CS10);                                   // switch CTC Mode on, set prescaler to 1
+#endif
+
+#ifdef TIMSK1
+    TIMSK1  = 1 << OCIE1A;                                                  // OCIE1A: Interrupt by timer compare
+#else
+    TIMSK   = 1 << OCIE1A;                                                  // OCIE1A: Interrupt by timer compare
+#endif
+}
+
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+ *  * timer 1 compare handler, called every 1/10000 sec
+ *   *---------------------------------------------------------------------------------------------------------------------------------------------------
+ *    */
+ISR(TIMER1_COMPA_vect)
+{
+	    (void) irsnd_ISR();                                                     // call irsnd ISR
+		// call other timer interrupt routines here...
+}
+
+
+
 /* ------------------------------------------------------------------------- */
 
 int main(void)
@@ -159,6 +193,8 @@ int main(void)
 	DDRB  = 0x01;
 	uchar   i;
 	uchar SofCmp = 0;
+
+	IRMP_DATA irmp_data;
 
     wdt_enable(WDTO_1S);
     /* Even if you don't use the watchdog, turn it off here. On newer devices,
@@ -177,6 +213,10 @@ int main(void)
         wdt_reset();
         _delay_ms(1);
     }
+
+	irsnd_init();			/* stuff */
+	timer1_init();
+
     usbDeviceConnect();
     sei();
     DBG1(0x01, 0, 0);       /* debug output: main loop starts */
