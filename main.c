@@ -8,6 +8,15 @@
  * This Revision: $Id$
  */
 
+/* PIN Configuration on Atmega 8
+ *
+ * Status LED:  PB0 (PIN14)
+ * USB D-:		PD2 (PIN2)   // D-/D+ reversed for the usbSofCount feature
+ * USB D+:		PD0 (PIN4)
+ *
+ */
+
+
 /*
 This example should run on most AVRs with only little changes. No special
 hardware resources except INT0 are used. You may have to change usbconfig.h for
@@ -53,6 +62,12 @@ static uchar    currentAddress;
 static uchar    bytesRemaining;
 
 static uchar	buf[48];
+
+/* status LED - code from usb2lpt project*/
+static uchar Led_T;	// "Nachblinkzeit" der LED in ms, 0 = LED blinkt nicht
+static uchar Led_F;	// "Blinkfrequenz" in ms (halbe Periode)
+static uchar Led_C;	// Blink-Zähler (läuft alles über SOF-Impuls)
+
 
 /* ------------------------------------------------------------------------- */
 
@@ -113,9 +128,37 @@ usbRequest_t    *rq = (void *)data;
 
 /* ------------------------------------------------------------------------- */
 
+// start status LED, t blinking period in 
+void statusLed_Start (uchar t)
+{
+	if (!Led_T) {
+		Led_C = t;
+		PORTB |= 0x01;	// LED off
+	}
+  Led_T = Led_F = t;
+}
+
+// LED-state  tested every 1 ms (SOF)
+static void statusLed_On1ms(void) {
+	uchar led_t = Led_T, led_c;
+	if (!led_t) return;
+		led_c = Led_C;			// load to register
+	if (!--led_c) {
+		PORTB ^= 0x01;			// toggle LED
+		led_c = Led_F;			// reload counter
+	}
+ 	if (!--led_t) PORTC &= ~0x01;	// switch LED on 
+	Led_T = led_t;				// write back register
+	Led_C = led_c;
+}
+
+/* ------------------------------------------------------------------------- */
+
 int main(void)
 {
-uchar   i;
+	DDRB  = 0x01;
+	uchar   i;
+	uchar SofCmp = 0;
 
     wdt_enable(WDTO_1S);
     /* Even if you don't use the watchdog, turn it off here. On newer devices,
@@ -137,10 +180,18 @@ uchar   i;
     usbDeviceConnect();
     sei();
     DBG1(0x01, 0, 0);       /* debug output: main loop starts */
+
+	statusLed_Start(100);
     for(;;){                /* main event loop */
         DBG1(0x02, 0, 0);   /* debug output: main loop iterates */
         wdt_reset();
+
+	 	SofCmp = usbSofCount;
         usbPoll();
+
+		if (SofCmp != usbSofCount) {	// SOF eingetroffen?
+			statusLed_On1ms();		// LED blinken lassen
+		}
     }
     return 0;
 }
