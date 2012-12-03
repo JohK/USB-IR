@@ -103,7 +103,7 @@ uchar   usbFunctionWrite(uchar *data, uchar len)
     if(len > bytesRemaining)
         len = bytesRemaining;
     //eeprom_write_block(data, (uchar *)0 + currentAddress, len);
-	memcpy(buf[currentAddress], data, len);
+	memcpy(&buf[currentAddress], data, len);
     currentAddress += len;
     bytesRemaining -= len;
 	flag_send = 1;
@@ -200,7 +200,7 @@ int main(void)
 	uchar   i;
 	uchar SofCmp = 0;
 
-	IRMP_DATA irmp_data;
+	IRMP_DATA *irmp_data;
 
     wdt_enable(WDTO_1S);
     /* Even if you don't use the watchdog, turn it off here. On newer devices,
@@ -221,7 +221,7 @@ int main(void)
     }
 
 	irsnd_init();			/* stuff */
-	timer1_init();		// <--- BUG INTERFERES SOMEHOW WITH USB
+	timer1_init();
 
     usbDeviceConnect();
     sei();
@@ -247,7 +247,7 @@ int main(void)
         //	irmp_data.address  = 0x00FF;
         //	irmp_data.command  = 0x0001;
         //	irmp_data.flags    = 0;
-        	irsnd_send_data (&irmp_data, TRUE);
+        	irsnd_send_data (irmp_data, TRUE);
 		}
 
 
