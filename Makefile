@@ -123,7 +123,7 @@ flash: main.hex
 
 # rule for deleting dependent files (those which can be built by Make):
 clean:
-	rm -f main.hex main.lst main.obj main.cof main.list main.map main.eep.hex main.elf *.o usbdrv/*.o main.s usbdrv/oddebug.s usbdrv/usbdrv.s
+	rm -f main.hex main.lst main.obj main.cof main.list main.map main.eep.hex main.elf *.o usbdrv/*.o main.s usbdrv/oddebug.s usbdrv/usbdrv.s irsnd/irsnd.o
 
 # Generic rule for compiling C files:
 .c.o:
@@ -150,7 +150,7 @@ usbdrv:
 main.elf: usbdrv $(OBJECTS)	# usbdrv dependency only needed because we copy it
 	$(COMPILE) -o main.elf $(OBJECTS)
 
-main.hex: main.elf usbconfig.h main.c
+main.hex: main.elf usbconfig.h main.c irsnd/irsnd.c
 	rm -f main.hex main.eep.hex
 	avr-objcopy -j .text -j .data -O ihex main.elf main.hex
 	avr-size main.hex
