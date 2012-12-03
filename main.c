@@ -63,7 +63,10 @@ PROGMEM const char usbHidReportDescriptor[22] = {    /* USB report descriptor */
 static uchar    currentAddress;
 static uchar    bytesRemaining;
 
-static uchar	buf[48];
+static uchar	buf[6];
+
+static uchar	flag_send;
+
 
 /* status LED - code from usb2lpt project*/
 static uchar Led_T;	// "Nachblinkzeit" der LED in ms, 0 = LED blinkt nicht
@@ -80,11 +83,13 @@ uchar   usbFunctionRead(uchar *data, uchar len)
 {
     if(len > bytesRemaining)
         len = bytesRemaining;
- //   eeprom_read_block(data, (uchar *)0 + currentAddress, len);
+    //eeprom_read_block(data, (uchar *)0 + currentAddress, len);
 
-	memcpy(data, &buf[currentAddress], len);
+	//memcpy(data, &buf[currentAddress], len);
+	*data = &buf;
     currentAddress += len;
     bytesRemaining -= len;
+	flag_send = 1;
     return len;
 }
 
@@ -98,9 +103,10 @@ uchar   usbFunctionWrite(uchar *data, uchar len)
     if(len > bytesRemaining)
         len = bytesRemaining;
     //eeprom_write_block(data, (uchar *)0 + currentAddress, len);
-	memcpy(data, &buf[currentAddress], len);
+	memcpy(buf[currentAddress], data, len);
     currentAddress += len;
     bytesRemaining -= len;
+	flag_send = 1;
     return bytesRemaining == 0; /* return 1 if this was the last chunk */
 }
 
@@ -178,7 +184,7 @@ void timer1_init (void)
  *  * timer 1 compare handler, called every 1/10000 sec
  *   *---------------------------------------------------------------------------------------------------------------------------------------------------
  *    */
-ISR(TIMER1_COMPA_vect)
+ISR(TIMER1_COMPA_vect, ISR_NOBLOCK)
 {
 	    (void) irsnd_ISR();                                                     // call irsnd ISR
 		// call other timer interrupt routines here...
@@ -215,7 +221,7 @@ int main(void)
     }
 
 	irsnd_init();			/* stuff */
-	timer1_init();
+	timer1_init();		// <--- BUG INTERFERES SOMEHOW WITH USB
 
     usbDeviceConnect();
     sei();
@@ -232,6 +238,21 @@ int main(void)
 		if (SofCmp != usbSofCount) {	// SOF eingetroffen?
 			statusLed_On1ms();		// LED blinken lassen
 		}
+
+		if (flag_send == 1) {
+			flag_send = 0;
+		//	irmp_data = (struct IRMP_DATA*) buf;
+			IRMP_DATA    *irmp_data = (void *)buf;
+        //	irmp_data.protocol = IRMP_NEC_PROTOCOL;
+        //	irmp_data.address  = 0x00FF;
+        //	irmp_data.command  = 0x0001;
+        //	irmp_data.flags    = 0;
+        	irsnd_send_data (&irmp_data, TRUE);
+		}
+
+
+
+
     }
     return 0;
 }
