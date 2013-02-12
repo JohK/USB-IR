@@ -26,15 +26,17 @@ section at the end of this file).
 
 /* ---------------------------- Hardware Config ---------------------------- */
 
-#define USB_CFG_IOPORTNAME      D
+
+
+#define USB_CFG_IOPORTNAME      B      // attiny
 /* This is the port where the USB bus is connected. When you configure it to
  * "B", the registers PORTB, PINB and DDRB will be used.
  */
-#define USB_CFG_DMINUS_BIT      2
+#define USB_CFG_DMINUS_BIT      1	// attiny
 /* This is the bit number in USB_CFG_IOPORT where the USB D- line is connected.
  * This may be any bit in the port.
  */
-#define USB_CFG_DPLUS_BIT       0
+#define USB_CFG_DPLUS_BIT       2	// attiny
 /* This is the bit number in USB_CFG_IOPORT where the USB D+ line is connected.
  * This may be any bit in the port. Please note that D+ must also be connected
  * to interrupt pin INT0! [You can also use other interrupts, see section
@@ -172,7 +174,7 @@ section at the end of this file).
 /* This macro (if defined) is executed when a USB SET_ADDRESS request was
  * received.
  */
-#define USB_COUNT_SOF                   1
+#define USB_COUNT_SOF                   0
 /* define this macro to 1 if you need the global variable "usbSofCount" which
  * counts SOF packets. This feature requires that the hardware interrupt is
  * connected to D- instead of D+.

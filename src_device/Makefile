@@ -7,10 +7,11 @@
 # License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
 # This Revision: $Id$
 
-DEVICE  = atmega8
+#DEVICE  = atmega8
+DEVICE  = attiny45
 F_CPU   = 16000000	# in Hz
-FUSE_L  = # see below for fuse values for particular devices
-FUSE_H  = 
+FUSE_L  = 0x6f # see below for fuse values for particular devices
+FUSE_H  = 0xdd
 AVRDUDE = avrdude -c avrispmkII -B 10 -P usb -p $(DEVICE) # edit this line for your programmer
 
 CFLAGS  = -Iusbdrv -Iirsnd -I. -DDEBUG_LEVEL=0

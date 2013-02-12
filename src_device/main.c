@@ -16,6 +16,11 @@
  *
  */
 
+/* PIN Configuration on ATtiny45
+ # IR LED:	PB0 (PIN 5)
+ # USB D-:  PB1 (PIN 6)
+ # USB D+:  PB2 (PIN 7) 
+*/
 
 /*
 This example should run on most AVRs with only little changes. No special
@@ -67,11 +72,6 @@ static uchar	buf[6];
 
 static uchar	flag_send;
 
-
-/* status LED - code from usb2lpt project*/
-static uchar Led_T;	// "Nachblinkzeit" der LED in ms, 0 = LED blinkt nicht
-static uchar Led_F;	// "Blinkfrequenz" in ms (halbe Periode)
-static uchar Led_C;	// Blink-Zähler (läuft alles über SOF-Impuls)
 
 
 /* ------------------------------------------------------------------------- */
@@ -136,7 +136,7 @@ usbRequest_t    *rq = (void *)data;
 
 /* ------------------------------------------------------------------------- */
 
-// start status LED, t blinking period in 
+/*// start status LED, t blinking period in 
 void statusLed_Start (uchar t)
 {
 	if (!Led_T) {
@@ -159,7 +159,7 @@ static void statusLed_On1ms(void) {
 	Led_T = led_t;				// write back register
 	Led_C = led_c;
 }
-
+*/
 
 
 void timer1_init (void)
@@ -180,11 +180,16 @@ void timer1_init (void)
 }
 
 
+
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  *  * timer 1 compare handler, called every 1/10000 sec
  *   *---------------------------------------------------------------------------------------------------------------------------------------------------
  *    */
-ISR(TIMER1_COMPA_vect, ISR_NOBLOCK)
+#if defined (__AVR_ATtiny45__) || defined (__AVR_ATtiny85__)                // ATtiny45 / ATtiny85:
+	ISR(TIM1_COMPA_vect, ISR_NOBLOCK)
+#else
+	ISR(TIMER1_COMPA_vect, ISR_NOBLOCK)
+#endif
 {
 	    (void) irsnd_ISR();                                                     // call irsnd ISR
 		// call other timer interrupt routines here...
@@ -196,9 +201,9 @@ ISR(TIMER1_COMPA_vect, ISR_NOBLOCK)
 
 int main(void)
 {
-	DDRB  = 0x01;
+	//DDRB  = 0x01;
 	uchar   i;
-	uchar SofCmp = 0;
+	//uchar SofCmp = 0;
 
 	IRMP_DATA *irmp_data;
 
@@ -227,17 +232,11 @@ int main(void)
     sei();
     DBG1(0x01, 0, 0);       /* debug output: main loop starts */
 
-	statusLed_Start(100);
     for(;;){                /* main event loop */
         DBG1(0x02, 0, 0);   /* debug output: main loop iterates */
         wdt_reset();
-
-	 	SofCmp = usbSofCount;
         usbPoll();
 
-		if (SofCmp != usbSofCount) {	// SOF eingetroffen?
-			statusLed_On1ms();		// LED blinken lassen
-		}
 
 		if (flag_send == 1) {
 			flag_send = 0;
