@@ -10,7 +10,7 @@
 #DEVICE  = atmega8
 DEVICE  = attiny45
 F_CPU   = 16000000	# in Hz
-FUSE_L  = 0x6f # see below for fuse values for particular devices
+FUSE_L  = 0xef # see below for fuse values for particular devices
 FUSE_H  = 0xdd
 AVRDUDE = avrdude -c avrispmkII -B 10 -P usb -p $(DEVICE) # edit this line for your programmer
 

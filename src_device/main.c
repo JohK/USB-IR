@@ -201,6 +201,7 @@ void timer1_init (void)
 
 int main(void)
 {
+	//DDRB &= ~((1 << DDB1) | (1 << DDB2));
 	//DDRB  = 0x01;
 	uchar   i;
 	//uchar SofCmp = 0;
@@ -225,30 +226,36 @@ int main(void)
         _delay_ms(1);
     }
 
-	irsnd_init();			/* stuff */
-	timer1_init();
+
+//	irsnd_init();			/* stuff */
+//	timer1_init();
 
     usbDeviceConnect();
     sei();
     DBG1(0x01, 0, 0);       /* debug output: main loop starts */
+
+//DDRB |= (1 << DDB0); // debug
 
     for(;;){                /* main event loop */
         DBG1(0x02, 0, 0);   /* debug output: main loop iterates */
         wdt_reset();
         usbPoll();
 
-
+//		PORTB=(1<<PB0);
+//		_delay_ms(250);
+//		PORTB &= ~(1<<PB0);
+		
 		if (flag_send == 1) {
 			flag_send = 0;
 		//	irmp_data = (struct IRMP_DATA*) buf;
 			IRMP_DATA    *irmp_data = (void *)buf;
+        	irsnd_send_data (irmp_data, TRUE);
+
         //	irmp_data.protocol = IRMP_NEC_PROTOCOL;
         //	irmp_data.address  = 0x00FF;
         //	irmp_data.command  = 0x0001;
         //	irmp_data.flags    = 0;
-        	irsnd_send_data (irmp_data, TRUE);
 		}
-
 
 
 
