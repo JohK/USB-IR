@@ -1,0 +1,43 @@
+eeschema (2012-apr-16-27)-stable  >> Creation date: Fri 08 Feb 2013 11:17:09 PM CET
+
+#Cmp ( order = Reference )
+| C1         22P         
+| C2         22P         
+| C3         100n        
+| D1         ZENER 3.6V  
+| D2         ZENER 3.6V  
+| D3         LED         
+| D4         IRLED       
+| IC1        ATTINY45-P  
+| J1         USB_1       
+| Q1         NPN         
+| R1         68R         
+| R2         68R         
+| R3         2k2         
+| R4         1k5         
+| R5         33R         
+| R6         4k7         
+| X1         QUARTZCMS4  
+#End Cmp
+
+#Cmp ( order = Value )
+| 100n         C3        
+| 1k5          R4        
+| 22P          C1        
+| 22P          C2        
+| 2k2          R3        
+| 33R          R5        
+| 4k7          R6        
+| 68R          R1        
+| 68R          R2        
+| ATTINY45-P   IC1       
+| IRLED        D4        
+| LED          D3        
+| NPN          Q1        
+| QUARTZCMS4   X1        
+| USB_1        J1        
+| ZENER 3.6V   D1        
+| ZENER 3.6V   D2        
+#End Cmp
+
+#End List

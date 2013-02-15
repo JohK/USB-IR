@@ -1,0 +1,129 @@
+Cmp-Mod V01 Created by CvPcb (2012-apr-16-27)-stable date = Fri 15 Feb 2013 11:09:47 PM CET
+
+BeginCmp
+TimeStamp = /5115607F;
+Reference = C1;
+ValeurCmp = 22P;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /5115608D;
+Reference = C2;
+ValeurCmp = 22P;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /511560BC;
+Reference = C3;
+ValeurCmp = 100n;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /511EB0FB;
+Reference = C4;
+ValeurCmp = 47u;
+IdModule  = C1V5;
+EndCmp
+
+BeginCmp
+TimeStamp = /51155E20;
+Reference = D1;
+ValeurCmp = ZENER_3.6V;
+IdModule  = D3;
+EndCmp
+
+BeginCmp
+TimeStamp = /51155DF7;
+Reference = D2;
+ValeurCmp = ZENER_3.6V;
+IdModule  = D3;
+EndCmp
+
+BeginCmp
+TimeStamp = /511565A2;
+Reference = D3;
+ValeurCmp = LED;
+IdModule  = LED-3MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /511561F6;
+Reference = D4;
+ValeurCmp = IRLED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /51155CC1;
+Reference = IC1;
+ValeurCmp = ATTINY45-P;
+IdModule  = DIP-8__300_ELL;
+EndCmp
+
+BeginCmp
+TimeStamp = /51155CDC;
+Reference = J1;
+ValeurCmp = USB_1;
+IdModule  = USB_A;
+EndCmp
+
+BeginCmp
+TimeStamp = /511561E6;
+Reference = Q1;
+ValeurCmp = NPN;
+IdModule  = TO92;
+EndCmp
+
+BeginCmp
+TimeStamp = /51155D44;
+Reference = R1;
+ValeurCmp = 68R;
+IdModule  = R3-LARGE_PADS;
+EndCmp
+
+BeginCmp
+TimeStamp = /51155D57;
+Reference = R2;
+ValeurCmp = 68R;
+IdModule  = R3-LARGE_PADS;
+EndCmp
+
+BeginCmp
+TimeStamp = /511565AF;
+Reference = R3;
+ValeurCmp = 2k2;
+IdModule  = R3-LARGE_PADS;
+EndCmp
+
+BeginCmp
+TimeStamp = /511564CD;
+Reference = R4;
+ValeurCmp = 1k5;
+IdModule  = R3-LARGE_PADS;
+EndCmp
+
+BeginCmp
+TimeStamp = /51156567;
+Reference = R5;
+ValeurCmp = 33R;
+IdModule  = R3-LARGE_PADS;
+EndCmp
+
+BeginCmp
+TimeStamp = /5115602E;
+Reference = R6;
+ValeurCmp = 4k7;
+IdModule  = R3-LARGE_PADS;
+EndCmp
+
+BeginCmp
+TimeStamp = /51155FF7;
+Reference = X1;
+ValeurCmp = QUARTZCMS4;
+IdModule  = HC-18UV;
+EndCmp
+
+EndListe
