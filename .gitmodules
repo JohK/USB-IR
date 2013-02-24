@@ -1,0 +1,3 @@
+[submodule "enclosing/nutsnbolts"]
+	path = enclosing/nutsnbolts
+	url = git@github.com:JohK/nutsnbolts.git
