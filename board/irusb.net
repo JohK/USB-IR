@@ -1,11 +1,11 @@
-# EESchema Netlist Version 1.1 created  Fri 15 Feb 2013 11:09:47 PM CET
+# EESchema Netlist Version 1.1 created  Sun 24 Feb 2013 10:11:00 PM CET
 (
  ( /5115607F C1 C1 22P
   ( 1 N-000010 )
   ( 2 GND )
  )
  ( /5115608D C1 C2 22P
-  ( 1 N-000007 )
+  ( 1 N-000006 )
   ( 2 GND )
  )
  ( /511560BC C1 C3 100n
@@ -22,10 +22,10 @@
  )
  ( /51155DF7 D3 D2 ZENER_3.6V
   ( 1 GND )
-  ( 2 N-000013 )
+  ( 2 N-000012 )
  )
  ( /511565A2 LED-3MM D3 LED
-  ( 1 N-000004 )
+  ( 1 N-000001 )
   ( 2 N-000011 )
  )
  ( /511561F6 LED-5MM D4 IRLED
@@ -35,16 +35,16 @@
  ( /51155CC1 DIP-8__300_ELL IC1 ATTINY45-P
   ( 1 /~RESET )
   ( 2 N-000010 )
-  ( 3 N-000007 )
+  ( 3 N-000006 )
   ( 4 GND )
-  ( 5 N-000003 )
+  ( 5 N-000007 )
   ( 6 /USB_D- )
   ( 7 /USB_D+ )
   ( 8 +5V )
  )
  ( /51155CDC USB_A J1 USB_1
   ( 1 +5V )
-  ( 2 N-000013 )
+  ( 2 N-000012 )
   ( 3 N-000009 )
   ( 4 GND )
   ( 5 GND )
@@ -52,7 +52,7 @@
  )
  ( /511561E6 TO92 Q1 NPN
   ( 1 GND )
-  ( 2 N-000003 )
+  ( 2 N-000008 )
   ( 3 N-000011 )
  )
  ( /51155D44 R3-LARGE_PADS R1 68R
@@ -60,12 +60,12 @@
   ( 2 /USB_D+ )
  )
  ( /51155D57 R3-LARGE_PADS R2 68R
-  ( 1 N-000013 )
+  ( 1 N-000012 )
   ( 2 /USB_D- )
  )
  ( /511565AF R3-LARGE_PADS R3 2k2
   ( 1 +5V )
-  ( 2 N-000004 )
+  ( 2 N-000001 )
  )
  ( /511564CD R3-LARGE_PADS R4 1k5
   ( 1 +5V )
@@ -79,9 +79,13 @@
   ( 1 /~RESET )
   ( 2 +5V )
  )
+ ( /512A8186 R3-LARGE_PADS R7 4k7
+  ( 1 N-000008 )
+  ( 2 N-000007 )
+ )
  ( /51155FF7 HC-18UV X1 QUARTZCMS4
   ( 1 N-000010 )
-  ( 3 N-000007 )
+  ( 3 N-000006 )
  )
 )
 *
@@ -170,6 +174,13 @@ $component R5
  SM1206
 $endlist
 $component R6
+ R?
+ SM0603
+ SM0805
+ R?-*
+ SM1206
+$endlist
+$component R7
  R?
  SM0603
  SM0805

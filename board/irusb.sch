@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Fri 15 Feb 2013 11:07:17 PM CET
+EESchema Schematic File Version 2  date Sun 24 Feb 2013 10:10:23 PM CET
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -36,7 +36,7 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 1 1
 Title "IRUSB"
-Date "15 feb 2013"
+Date "24 feb 2013"
 Rev ".1"
 Comp ""
 Comment1 ""
@@ -45,13 +45,13 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 Wire Wire Line
+	4050 3700 4050 3550
+Wire Wire Line
 	6900 4850 7550 4850
 Wire Wire Line
 	7550 4850 7550 4800
 Wire Wire Line
-	4050 3550 4050 4350
-Wire Wire Line
-	4050 4350 4200 4350
+	4200 4350 4050 4350
 Wire Wire Line
 	2000 5050 2000 5200
 Wire Wire Line
@@ -170,6 +170,17 @@ Wire Wire Line
 	7550 4400 7550 4350
 Wire Wire Line
 	7550 4350 6900 4350
+Wire Wire Line
+	4050 4350 4050 4200
+$Comp
+L R R7
+U 1 1 512A8186
+P 4050 3950
+F 0 "R7" V 4130 3950 50  0000 C CNN
+F 1 "4k7" V 4050 3950 50  0000 C CNN
+	1    4050 3950
+	1    0    0    -1  
+$EndComp
 $Comp
 L C C4
 U 1 1 511EB0FB
