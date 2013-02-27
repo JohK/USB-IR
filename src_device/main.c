@@ -164,13 +164,13 @@ static void statusLed_On1ms(void) {
 
 void timer1_init (void)
 {
-#if defined (__AVR_ATtiny45__) || defined (__AVR_ATtiny85__)                // ATtiny45 / ATtiny85:
+//#if defined (__AVR_ATtiny45__) || defined (__AVR_ATtiny85__)                // ATtiny45 / ATtiny85:
     OCR1C   =  (F_CPU / F_INTERRUPTS / 4) - 1;                              // compare value: 1/15000 of CPU frequency, presc = 4
     TCCR1   = (1 << CTC1) | (1 << CS11) | (1 << CS10);                      // switch CTC Mode on, set prescaler to 4
-#else                                                                       // ATmegaXX:
-    OCR1A   =  (F_CPU / F_INTERRUPTS) - 1;                                  // compare value: 1/15000 of CPU frequency
-    TCCR1B  = (1 << WGM12) | (1 << CS10);                                   // switch CTC Mode on, set prescaler to 1
-#endif
+//#else                                                                       // ATmegaXX:
+//    OCR1A   =  (F_CPU / F_INTERRUPTS) - 1;                                  // compare value: 1/15000 of CPU frequency
+//    TCCR1B  = (1 << WGM12) | (1 << CS10);                                   // switch CTC Mode on, set prescaler to 1
+//#endif
 
 #ifdef TIMSK1
     TIMSK1  = 1 << OCIE1A;                                                  // OCIE1A: Interrupt by timer compare
@@ -192,6 +192,7 @@ void timer1_init (void)
 #endif
 {
 	    (void) irsnd_ISR();                                                     // call irsnd ISR
+
 		// call other timer interrupt routines here...
 }
 
@@ -203,6 +204,7 @@ int main(void)
 {
 	//DDRB &= ~((1 << DDB1) | (1 << DDB2));
 	//DDRB  = 0x01;
+	//PORTB |= (1<<PB0); // LED IRLED debug
 	uchar   i;
 	//uchar SofCmp = 0;
 
@@ -216,9 +218,8 @@ int main(void)
      * That's the way we need D+ and D-. Therefore we don't need any
      * additional hardware initialization.
      */
-    odDebugInit();
-    DBG1(0x00, 0, 0);       /* debug output: main starts */
-    usbInit();
+    //odDebugInit();
+    //DBG1(0x00, 0, 0);       /* debug output: main starts */
     usbDeviceDisconnect();  /* enforce re-enumeration, do this while interrupts are disabled! */
     i = 0;
     while(--i){             /* fake USB disconnect for > 250 ms */
@@ -226,24 +227,27 @@ int main(void)
         _delay_ms(1);
     }
 
-
-//	irsnd_init();			/* stuff */
-//	timer1_init();
+	irsnd_init();			/* stuff */
+	timer1_init();
 
     usbDeviceConnect();
+    usbInit();
     sei();
-    DBG1(0x01, 0, 0);       /* debug output: main loop starts */
+
+    //DBG1(0x01, 0, 0);       /* debug output: main loop starts */
 
 //DDRB |= (1 << DDB0); // debug
 
     for(;;){                /* main event loop */
-        DBG1(0x02, 0, 0);   /* debug output: main loop iterates */
+        //DBG1(0x02, 0, 0);   /* debug output: main loop iterates */
         wdt_reset();
         usbPoll();
 
-//		PORTB=(1<<PB0);
-//		_delay_ms(250);
-//		PORTB &= ~(1<<PB0);
+		// LED IRLED debug
+		// PORTB=(1<<PB0);
+		// _delay_ms(250);
+//		 PORTB &= ~(1<<PB0);
+		// _delay_ms(250);
 		
 		if (flag_send == 1) {
 			flag_send = 0;
