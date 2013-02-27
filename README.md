@@ -8,4 +8,4 @@ This software includes the firmware for a usb-to-IR sender dongle, the host cli 
 This package makes use of v-usb for avr, which can be used in the terms of GPL v2.
 
 == IRMP ==
-IRMP is a package by Frank M. from the http://www.mikrocontroller.net/ web-board. No license is given in that package or on their webpage. The package is therefore not included in this project.
+IRMP is a package by Frank M. from the http://www.mikrocontroller.net/ web-board. The header also states a GPL license, a svn repository is over at mikrocontroller.net. 
