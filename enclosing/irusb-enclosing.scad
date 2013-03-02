@@ -5,19 +5,22 @@ brd_length = 63.5;
 brd_height = 8;
 
 wall = 1;
+wallv = [1,1,1];
 cl_wall = 1;
 
 o_width = brd_width+2*wall+2*cl_wall;
 o_length = brd_length+2*wall+2*cl_wall;
 o_height = brd_height+2*wall;
+
+dimo = [o_length, o_width, o_height];
 o_cornrad = 5;
 
 // screw 1 x:-16.51  y: 3.81
-pos_screw1 = [-16.5, 3.81, 0];
+pos_screw1 = [16.5, 21.59, 0];
 // screw 2 x:-39.37  y: 3.81
-pos_screw2 = [-39.37, 3.81, 0];
+pos_screw2 = [39.37, 21.59, 0];
 // screw 3 x:-16.51  y:21.59
-pos_screw3 = [-16.51, 21.59, 0];
+pos_screw3 = [16.51, 3.81, 0];
 
 y_irled = 15.24;
 z_irled = 7.5;
@@ -30,40 +33,15 @@ y_usb = brd_width/2;
 
 translate([0, 0, wall]) board();
 
-//difference(){
 
-union() {
-translate([-brd_length/2, brd_width/2, 0])
-color("Yellow", 0.5)
-union() {
-difference(){
-	square_rounded(l=o_length,w=o_width,h=o_height, r=o_cornrad, center=true);
-	square_rounded(l=brd_length+2*cl_wall,w=brd_width+2*cl_wall,h=brd_height, r=o_cornrad-wall, center=true);
-	translate([0,0,6]) cube([250,250,10], center=true);
+difference() {
+case_rounded(dimo=dimo, wall=wallv, cl=[2,2,1.5], r=o_cornrad, center=false);
+translate(pos_screw1) mountpost(ro = 2.5, ho = 1.5, ri = 1.5, hi = 1.5, cl_ri=0.2);
+translate(pos_screw2) mountpost(ro = 2.5, ho = 1.5, ri = 1.5, hi = 1.5, cl_ri=0.2);
+translate(pos_screw3) mountpost(ro = 2.5, ho = 1.5, ri = 1.5, hi = 1.5, cl_ri=0.2);
+
+translate([-200-16.51,-50,-20]) cube([200,200,200]);
 }
-
-translate([0,0,-o_height/2+wall+0.75])
-difference(){
-	square_rounded(l=brd_length+2*cl_wall,w=brd_width+2*cl_wall,h=1.5, r=o_cornrad-wall, center=true);
-	square_rounded(l=brd_length-4,w=brd_width-4,h=2+0.1, r=o_cornrad-wall-1, center=true);
-}
-
-
-
-
-} // end of union
-
-
-translate(pos_screw1+[0,0,-2.5]) mountpost(ro = 2.5, ho = 1.5, ri = 1.5, hi = 1.5, cl_ri=0.2);
-translate(pos_screw2+[0,0,-2.5]) mountpost(ro = 2.5, ho = 1.5, ri = 1.5, hi = 1.5, cl_ri=0.2);
-translate(pos_screw3+[0,0,-2.5]) mountpost(ro = 2.5, ho = 1.5, ri = 1.5, hi = 1.5, cl_ri=0.2);
-}
-
-
-
-//translate([-200-16.51,-50,-20]) cube([200,200,200]);
-//}
-
 
 //	
 
@@ -103,18 +81,24 @@ translate([-o_length,-2*wall,o_height-wall-3]) cube([250,250,10]);
 
 
 
-module box_rounded(dimo, ) {
+module case_rounded(dimo, wall, r, cl=[0.2, 0.2, 1], center=true) {
+	translate(center ? [0,0,0] : dimo/2-wall-cl/2)
 	union() {
 	difference(){
-		square_rounded(l=o_length,w=o_width,h=o_height, r=o_cornrad, center=true);
-		square_rounded(l=brd_length+2*cl_wall,w=brd_width+2*cl_wall,h=brd_height, r=o_cornrad-wall, center=true);
+		cube_rounded(dim=dimo,r=r,center=true);
+		cube_rounded(dim=dimo-2*wall,r=r-wall[0],center=true);
+
 		translate([0,0,6]) cube([250,250,10], center=true);
 	}
 
-	translate([0,0,-o_height/2+wall+0.75])
+
+	// bevel
+	translate([0,0,-dimo[2]/2+wall[2]+cl[2]/2])
 	difference(){
-		square_rounded(l=brd_length+2*cl_wall,w=brd_width+2*cl_wall,h=1.5, r=o_cornrad-wall, center=true);
-		square_rounded(l=brd_length-4,w=brd_width-4,h=2+0.1, r=o_cornrad-wall-1, center=true);
+		cube_rounded(dim=[dimo[0], dimo[1], cl[2]], r=r, center=true);
+		assign(tmp = [dimo[0]-2*wall[0]-2*cl[0], dimo[1]-2*wall[1]-2*cl[1], cl[2]+0.1])
+			cube_rounded(dim=tmp,r=r-wall[0]-cl[0],center=true);
+
 	}
 
 	} // end of union
@@ -135,8 +119,11 @@ module mountpost(
 
 
 module board() {
-	color("DarkGreen") translate([-brd_length, 0, 0]) cube([brd_length, brd_width, 1.5]);
-	translate([-24.75, 0, 0.7]) import_stl("../board/irusb.stl");
+	translate([0, brd_width, 0]) rotate([0, 0, 180]) 
+	union() {
+		color("DarkGreen") translate([-brd_length, 0, 0]) cube([brd_length, brd_width, 1.5]);
+		translate([-24.75, 0, 0.7]) import_stl("../board/irusb.stl");
+	}
 }
 
 module hole_led(d=5, h=5, cld=0.2) {
@@ -148,7 +135,11 @@ module hole_usbAm(l=15, clw=0.2, clh=0.2) {
 }
 
 
-module cube_rounded(dim=[1,1,1], r=1, center=false) {
+module cube_rounded(
+				dim=[1,1,1],  // dimension of "cube"
+				r=0.5,          // radius of rounded corner (xy)
+				center=false  // is centered?
+					) {
 	translate(center ? [0,0,0] : [dim[0]/2,dim[1]/2,0])
 	hull() for(m=[[0,0,0], [1,0,0], [dim[0]-r*2,dim[1]-r*2,0], [0,1,0]])
 		mirror(m) translate([dim[0]/2-r, dim[1]/2-r, 0]) cylinder(h=dim[2],r=r, center=center);
