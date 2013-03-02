@@ -39,28 +39,65 @@ pos_usb = [-3*wallv[0], dim_brd[1]/2, brd_thickness];
 //y_usb = brd_width/2;
 
 
+// include <nutsnbolts/cyl_head_bolt.scad>;
+
+
 // board();
 
 
+translate([0,0,wallv[2]+brd_thickness])  // manufact. offset
+
+// bottom half
 difference() {
 	union() {
 	//color("Grey", 0.2)
-		case_rounded(dimo=dimo, wall=wallv, ch=5 , cl=[2,2,1.5], r=o_cornrad, center=false);
+		case_rounded(dimo=dimo, wall=wallv, ch=7.5, cl=[2,2,1.5], r=o_cornrad, bottom=true, center=false);
 	translate(pos_screw1) mountpost(ro = 2, ho = 1.5, ri = 1.5, hi = 1.75, cl_ri=0.2);
-	translate(pos_screw2) mountpost(ro = 2, ho = 1.5, ri = 1.5, hi = 1.75, cl_ri=0.2);
-	translate(pos_screw3) mountpost(ro = 2, ho = 1.5, ri = 1.5, hi = 1.75, cl_ri=0.2);
+
+	translate(pos_screw2-[0,0,1.5]) cylinder(r=3.75,h=1.5);
+	translate(pos_screw3-[0,0,1.5]) cylinder(r=3.75,h=1.5);
 	}
 
+	openings();
+	translate(pos_screw2-[0,0,1.75])
+		union() {
+			cylinder(r=1.5,h=15,center=true);
+			cylinder(r=2.75,h=2,center=true);
+		}
+	translate(pos_screw3-[0,0,1.75])
+		union() {
+			cylinder(r=1.5,h=15,center=true);
+			cylinder(r=2.75,h=2,center=true);
+		}
+
+
+//translate([16.51,-50,-20]) cube([200,200,200]);
+}
+
+
+// upper half
+ translate([0,-7.5,dimo[2]-wallv[2]-brd_thickness]) rotate ([180,0,0])
+		
+	difference(){
+	union() {
+		case_rounded(dimo=dimo, wall=wallv, ch=7.5, cl=[2,2,1.5], r=o_cornrad, bottom=false, center=false);
+		for (pos_screw = [pos_screw2, pos_screw3]) {
+			translate([0,0,dimo[2]-wallv[2]-cl_wall-brd_thickness]+pos_screw)
+				rotate([180,0,0]) screwpost(do=5,di=2.3,h=7);
+		}
+	}
+
+	openings();
+	//translate(pos_screw2) cube(dimo);
+}
+
+module openings() {
 	// ir-LED hole
 	translate(pos_irled) rotate([0, -90, 0]) hole_led(d=dia_irled);
-
 	// status LED hole
-	translate(pos_sled) hole_led(d=2);
-
+	translate(pos_sled) hole_led(d=2, cld=0.5);
 	// usbA
 	translate(pos_usb) hole_usbAm();
-
-translate([16.51,-50,-20]) cube([200,200,200]);
 }
 
 
@@ -68,15 +105,27 @@ translate([16.51,-50,-20]) cube([200,200,200]);
 
 
 
+
+
+
+
+
+
+
 module case_rounded(
-					dimo, // outer dimensions (vector)
-					wall, // wall thicknesses (vector)
-					r,    // corner radius
-					ch,   // cut height (bottom, top)
-					cl=[0.2, 0.2, 1], // board clearance
-					center=true
- 					) {
+	dimo, // outer dimensions (vector)
+	wall, // wall thicknesses (vector)
+	r,    // corner radius
+	ch,   // cut height (bottom, top)
+	cl=[0.2, 0.2, 1], // board clearance
+	bottom=true,
+	center=true
+ 	) {
+
 	translate(center ? [0,0,0] : dimo/2-wall-cl/2-[0,0,cl[2]/2])
+
+	union() {
+
 	difference(){
 	union() {
 		difference(){
@@ -95,9 +144,35 @@ module case_rounded(
 		}
 	} // end of union (basebody)
 
-	translate() cube(dimo, center=true);
+	translate(bottom ? [0,0, ch] : 
+			            [0,0, -dimo[2]+ch])
+		cube(dimo, center=true);
+	}
+
+	if (bottom) {
+	// alignment
+	difference() {
+		for (i = [[-0.75, 1], [-0.25, 1], [0.25, 1], [0.75, 1],
+                 [-0.75, -1], [-0.25, -1], [0.25, -1], [0.75, -1],
+				  [-1, 0.55], [-1, -0.55],
+                 [1, 0.55], [1, -0.55]]) {
+			translate([i[0]*(dimo[0]/2-wall[0]),i[1]*(dimo[1]/2-wall[0]-0.1),-dimo[2]/2])
+           		cylinder(d=wall[0],h=ch+1.5,center=false);
+		}
+			difference(){
+			cube_rounded(dim=dimo,r=r,center=true);
+			cube_rounded(dim=dimo-2*wall,r=r-wall[0],center=true);
+		}
+	}
+	} // end if
+
 	}
 }
+
+
+
+
+
 
 
 module mountpost( 
@@ -112,8 +187,21 @@ module mountpost(
 	
 }
 
-module screwpost() {
+module screwpost(
+	di = 2.3,
+	do = 5,
+	h = 5,
+	) {
+	translate([0,0, h/2])
+	difference() {
+		union() {
+			translate([0,0,-h/2+0.5]) cylinder(r1=do*.75, r2=do/2, h=1, center=true);
+			cylinder(r=do/2,h=h,center=true); }
+		cylinder(r=di/2,h=h+0.1,center=true);
 	
+
+
+	}
 }
 
 
@@ -132,6 +220,9 @@ module hole_led(d=5, h=5, cld=0.2) {
 module hole_usbAm(l=15, clw=0.2, clh=0.2) {
 	translate([l/2,0,(4.5+clh)/2]) cube([l,12+clw,4.5+clh], center=true);
 }
+
+
+
 
 
 module cube_rounded(
